@@ -45,7 +45,9 @@ var listModelsCmd = &cobra.Command{
 
 			// Print each model
 			for _, model := range models {
-				fmt.Fprintf(w, "%s\t%s\n", provider, model)
+				if _, err := fmt.Fprintf(w, "%s\t%s\n", provider, model); err != nil {
+					return fmt.Errorf("error writing model data: %w", err)
+				}
 			}
 		}
 

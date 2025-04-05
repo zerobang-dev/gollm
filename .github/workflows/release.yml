@@ -1,0 +1,66 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          
+      - name: Test
+        run: go test ./...
+
+  build-linux:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          
+      - name: Build for Linux
+        run: |
+          go build -v ./...
+          go build -o go-llm-linux cmd/go-llm/main.go
+          
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-llm-linux
+          path: go-llm-linux
+  
+  build-apple:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          
+      - name: Build for Apple Silicon
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+        run: |
+          go build -v ./...
+          go build -o go-llm-darwin-arm64 cmd/go-llm/main.go
+          
+      - name: Upload Apple Silicon artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-llm-darwin-arm64
+          path: go-llm-darwin-arm64

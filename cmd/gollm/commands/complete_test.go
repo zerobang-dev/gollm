@@ -89,7 +89,9 @@ func mockCommand(t *testing.T, args []string, wantErr bool, contains []string) {
 	err := cmd.Execute()
 
 	// Restore stdout
-	w.Close()
+	if err := w.Close(); err != nil {
+		t.Fatalf("Failed to close pipe: %v", err)
+	}
 	os.Stdout = oldStdout
 
 	// Read captured output

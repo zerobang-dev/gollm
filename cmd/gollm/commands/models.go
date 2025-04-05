@@ -20,8 +20,12 @@ var listModelsCmd = &cobra.Command{
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 
 		// Add header
-		fmt.Fprintln(w, "PROVIDER\tMODEL")
-		fmt.Fprintln(w, "--------\t-----")
+		if _, err := fmt.Fprintln(w, "PROVIDER\tMODEL"); err != nil {
+				return fmt.Errorf("error writing header: %w", err)
+			}
+		if _, err := fmt.Fprintln(w, "--------\t-----"); err != nil {
+				return fmt.Errorf("error writing header: %w", err)
+			}
 
 		// Get providers and sort them for consistent output
 		providers := make([]string, 0, len(llm.SupportedProviders))
@@ -46,7 +50,9 @@ var listModelsCmd = &cobra.Command{
 		}
 
 		// Flush the tabwriter
-		w.Flush()
+		if err := w.Flush(); err != nil {
+			return fmt.Errorf("error flushing tabwriter: %w", err)
+		}
 
 		return nil
 	},

@@ -129,7 +129,12 @@ func (p *DeepseekProvider) Query(ctx context.Context, prompt string, options ...
 	if err != nil {
 		return "", fmt.Errorf("error sending request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+			if err := resp.Body.Close(); err != nil {
+				// Just log the error, can't return it here
+				fmt.Printf("Error closing response body: %v\n", err)
+			}
+		}()
 
 	// Read response body
 	body, err := io.ReadAll(resp.Body)

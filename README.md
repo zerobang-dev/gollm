@@ -108,6 +108,38 @@ gollm -a -t 0.8 -s "You are a Go expert" "What are the best practices for error 
 - `-s, --system`: Provide a system prompt for context
 - `-a, --all`: Query all configured providers and compare responses side-by-side
 
+## Query History
+
+gollm automatically logs all your queries to a local SQLite database, making it easy to review and search through your past interactions with LLMs.
+
+```bash
+# View your 10 most recent queries
+gollm history
+
+# View more history entries
+gollm history --limit 50
+
+# See detailed information about your most recent query
+gollm history --detail
+
+# Search through your query history for specific topics
+gollm history --search "golang"
+gollm history --search "python"
+gollm history --search "machine learning"
+
+# Search and limit combined
+gollm history --search "algorithm" --limit 5
+
+# Search for queries related to specific languages or concepts
+gollm history --search "recursion"
+gollm history --search "database"
+gollm history --search "AI" --detail
+```
+
+The search functionality looks through both your prompts and the model responses, so you can find specific information even if you don't remember exactly what you asked.
+
+All query logs are stored in `~/.config/gollm/queries.db` using SQLite, which ensures your query history is efficiently stored and remains private on your machine.
+
 ## Future Features
 
 - Interactive chat sessions

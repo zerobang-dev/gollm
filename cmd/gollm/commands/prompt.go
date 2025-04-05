@@ -9,6 +9,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/spf13/cobra"
 	"github.com/zerobang-dev/gollm/pkg/config"
+	"github.com/zerobang-dev/gollm/pkg/logger"
 	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
@@ -47,6 +48,15 @@ func queryLLM(ctx context.Context, prompt string, modelFlag string, systemPrompt
 	if err != nil {
 		return nil, fmt.Errorf("error loading config: %w", err)
 	}
+	
+	// Initialize logger
+	var queryLogger *logger.Logger
+	configDir := config.GetConfigDir()
+	queryLogger, err = logger.NewLogger(configDir)
+	if err != nil {
+		// Just log a warning but continue without logging
+		fmt.Printf("Warning: Query logging disabled - %v\n", err)
+	}
 
 	// Create HTTP client with timeout
 	httpClient := &http.Client{
@@ -66,17 +76,22 @@ func queryLLM(ctx context.Context, prompt string, modelFlag string, systemPrompt
 
 	// Initialize API keys map - not used directly here
 
+	// Close logger when function returns
+	if queryLogger != nil {
+		defer queryLogger.Close()
+	}
+
 	if queryAllFlag {
 		// Query all providers flag is set
-		return queryAllProviders(ctx, prompt, cfg, httpClient, options)
+		return queryAllProviders(ctx, prompt, cfg, httpClient, options, queryLogger)
 	} else {
 		// Regular single provider query
-		return querySingleProvider(ctx, prompt, modelFlag, cfg, httpClient, options)
+		return querySingleProvider(ctx, prompt, modelFlag, cfg, httpClient, options, queryLogger)
 	}
 }
 
 // queryAllProviders queries all available providers and returns results
-func queryAllProviders(ctx context.Context, prompt string, cfg *config.Config, httpClient *http.Client, options []llm.Option) (map[string]llm.ProviderResponse, error) {
+func queryAllProviders(ctx context.Context, prompt string, cfg *config.Config, httpClient *http.Client, options []llm.Option, queryLogger *logger.Logger) (map[string]llm.ProviderResponse, error) {
 	// Collect API keys for all available providers
 	allApiKeys := make(map[string]string)
 	for provider := range llm.SupportedProviders {
@@ -93,6 +108,11 @@ func queryAllProviders(ctx context.Context, prompt string, cfg *config.Config, h
 
 	// Create LLM service with all API keys
 	service := llm.NewService(allApiKeys, httpClient)
+	
+	// Set logger if available
+	if queryLogger != nil {
+		service.SetLogger(queryLogger)
+	}
 
 	// Create and start spinner
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
@@ -109,7 +129,7 @@ func queryAllProviders(ctx context.Context, prompt string, cfg *config.Config, h
 }
 
 // querySingleProvider queries a single provider and returns the result
-func querySingleProvider(ctx context.Context, prompt string, modelFlag string, cfg *config.Config, httpClient *http.Client, options []llm.Option) (*struct {
+func querySingleProvider(ctx context.Context, prompt string, modelFlag string, cfg *config.Config, httpClient *http.Client, options []llm.Option, queryLogger *logger.Logger) (*struct {
 	Response    string
 	ElapsedTime time.Duration
 }, error) {
@@ -132,6 +152,11 @@ func querySingleProvider(ctx context.Context, prompt string, modelFlag string, c
 	apiKeys := make(map[string]string)
 	apiKeys[providerName] = apiKey
 	service := llm.NewService(apiKeys, httpClient)
+	
+	// Set logger if available
+	if queryLogger != nil {
+		service.SetLogger(queryLogger)
+	}
 
 	// Create and start spinner
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)

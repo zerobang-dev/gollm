@@ -119,8 +119,33 @@ func getConfigPath() (string, error) {
 		return "", fmt.Errorf("error getting user home directory: %w", err)
 	}
 
-	configDir := filepath.Join(homeDir, ".config", "gollm")
+	configDir := os.Getenv("GOLLM_CONFIG_DIR")
+	if configDir == "" {
+		configDir = filepath.Join(homeDir, ".config", "gollm")
+	}
 	configPath := filepath.Join(configDir, "config.yml")
 
 	return configPath, nil
+}
+
+// GetConfigDir returns the path to the configuration directory for use in other packages
+func GetConfigDir() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		// Fallback to a temp directory if we can't get the home dir
+		return os.TempDir()
+	}
+
+	configDir := os.Getenv("GOLLM_CONFIG_DIR")
+	if configDir == "" {
+		configDir = filepath.Join(homeDir, ".config", "gollm")
+	}
+
+	// Create the config directory if it doesn't exist
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		// Fallback to a temp directory if we can't create the config dir
+		return os.TempDir()
+	}
+
+	return configDir
 }

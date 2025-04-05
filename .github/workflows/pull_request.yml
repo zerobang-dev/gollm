@@ -41,3 +41,4 @@ jobs:
         
       - name: Check coverage
         run: go tool cover -func=coverage.out
+        

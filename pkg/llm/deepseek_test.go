@@ -117,7 +117,9 @@ func TestDeepseekProviderQuery(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(mockResponse)
+		if err := json.NewEncoder(w).Encode(mockResponse); err != nil {
+			t.Fatalf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -183,7 +185,9 @@ func TestDeepseekProviderQueryWithSystemPrompt(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(mockResponse)
+		if err := json.NewEncoder(w).Encode(mockResponse); err != nil {
+			t.Fatalf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -226,7 +230,9 @@ func TestDeepseekProviderAPIError(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(errResponse)
+		if err := json.NewEncoder(w).Encode(errResponse); err != nil {
+			t.Fatalf("Failed to encode error response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -265,7 +271,9 @@ func TestDeepseekProviderEmptyResponse(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(emptyResponse)
+		if err := json.NewEncoder(w).Encode(emptyResponse); err != nil {
+			t.Fatalf("Failed to encode empty response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -338,7 +346,9 @@ func TestDeepseekProviderContext(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(mockResponse)
+		if err := json.NewEncoder(w).Encode(mockResponse); err != nil {
+			t.Fatalf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 

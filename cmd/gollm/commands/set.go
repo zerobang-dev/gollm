@@ -54,5 +54,7 @@ var setCmd = &cobra.Command{
 
 func init() {
 	setCmd.Flags().StringVar(&apiKeyFlag, "api-key", "", "API key for the provider")
-	setCmd.MarkFlagRequired("api-key")
+	if err := setCmd.MarkFlagRequired("api-key"); err != nil {
+		panic(fmt.Sprintf("Failed to mark api-key flag as required: %v", err))
+	}
 }

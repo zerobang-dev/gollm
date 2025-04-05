@@ -23,7 +23,9 @@ func setupAnthropicMockServer(t *testing.T) *httptest.Server {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(mockResponse)
+		if err := json.NewEncoder(w).Encode(mockResponse); err != nil {
+			t.Fatalf("Failed to encode Anthropic mock response: %v", err)
+		}
 	}))
 }
 
@@ -43,7 +45,9 @@ func setupDeepseekMockServer(t *testing.T) *httptest.Server {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(mockResponse)
+		if err := json.NewEncoder(w).Encode(mockResponse); err != nil {
+			t.Fatalf("Failed to encode Deepseek mock response: %v", err)
+		}
 	}))
 }
 

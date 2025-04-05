@@ -94,7 +94,9 @@ func mockCommand(t *testing.T, args []string, wantErr bool, contains []string) {
 
 	// Read captured output
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	if _, err := io.Copy(&buf, r); err != nil {
+		t.Fatalf("Failed to read output: %v", err)
+	}
 	output := buf.String()
 
 	if (err != nil) != wantErr {

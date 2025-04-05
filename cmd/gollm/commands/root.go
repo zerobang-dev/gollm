@@ -10,7 +10,7 @@ var (
 
 // rootCmd represents the base command
 var rootCmd = &cobra.Command{
-	Use:   "go-llm",
+	Use:   "gollm",
 	Short: "A CLI for interacting with LLMs",
 	Long: `A command-line interface for interacting with Large Language Models (LLMs).
 Use it to chat, get completions, or stream responses from different LLM providers.`,

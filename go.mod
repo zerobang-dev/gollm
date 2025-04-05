@@ -1,4 +1,4 @@
-module github.com/zerobang-dev/go-llm
+module github.com/zerobang-dev/gollm
 
 go 1.24.1
 

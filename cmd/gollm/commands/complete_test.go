@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 // Mock execution of the command without actually calling external APIs
@@ -26,7 +26,7 @@ func mockCommand(t *testing.T, args []string, wantErr bool, contains []string) {
 	}
 
 	// Create a fresh command for each test to avoid state between runs
-	cmd := &cobra.Command{Use: "go-llm"}
+	cmd := &cobra.Command{Use: "gollm"}
 	cmd.AddCommand(completeCmd)
 	cmd.PersistentFlags().StringVarP(&modelFlag, "model", "m", "claude-3-7-sonnet-latest", "LLM model to use")
 
@@ -89,12 +89,16 @@ func mockCommand(t *testing.T, args []string, wantErr bool, contains []string) {
 	err := cmd.Execute()
 
 	// Restore stdout
-	w.Close()
+	if err := w.Close(); err != nil {
+		t.Fatalf("Failed to close pipe: %v", err)
+	}
 	os.Stdout = oldStdout
 
 	// Read captured output
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	if _, err := io.Copy(&buf, r); err != nil {
+		t.Fatalf("Failed to read output: %v", err)
+	}
 	output := buf.String()
 
 	if (err != nil) != wantErr {

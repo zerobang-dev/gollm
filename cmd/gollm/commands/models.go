@@ -7,7 +7,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 // listModelsCmd represents the models command
@@ -20,8 +20,12 @@ var listModelsCmd = &cobra.Command{
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 
 		// Add header
-		fmt.Fprintln(w, "PROVIDER\tMODEL")
-		fmt.Fprintln(w, "--------\t-----")
+		if _, err := fmt.Fprintln(w, "PROVIDER\tMODEL"); err != nil {
+			return fmt.Errorf("error writing header: %w", err)
+		}
+		if _, err := fmt.Fprintln(w, "--------\t-----"); err != nil {
+			return fmt.Errorf("error writing header: %w", err)
+		}
 
 		// Get providers and sort them for consistent output
 		providers := make([]string, 0, len(llm.SupportedProviders))
@@ -41,12 +45,16 @@ var listModelsCmd = &cobra.Command{
 
 			// Print each model
 			for _, model := range models {
-				fmt.Fprintf(w, "%s\t%s\n", provider, model)
+				if _, err := fmt.Fprintf(w, "%s\t%s\n", provider, model); err != nil {
+					return fmt.Errorf("error writing model data: %w", err)
+				}
 			}
 		}
 
 		// Flush the tabwriter
-		w.Flush()
+		if err := w.Flush(); err != nil {
+			return fmt.Errorf("error flushing tabwriter: %w", err)
+		}
 
 		return nil
 	},

@@ -13,8 +13,8 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/config"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/config"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 var (
@@ -99,7 +99,7 @@ var completeCmd = &cobra.Command{
 
 			// Check if we have any API keys
 			if len(apiKeys) == 0 {
-				return fmt.Errorf("no API keys found. Set at least one provider API key with: go-llm set <provider> --api-key YOUR_API_KEY")
+				return fmt.Errorf("no API keys found. Set at least one provider API key with: gollm set <provider> --api-key YOUR_API_KEY")
 			}
 
 			// Create LLM service with all API keys
@@ -120,8 +120,12 @@ var completeCmd = &cobra.Command{
 			w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 
 			// Add header
-			fmt.Fprintln(w, "PROVIDER\tMODEL\tTIME\tRESPONSE")
-			fmt.Fprintln(w, "--------\t-----\t----\t--------")
+			if _, err := fmt.Fprintln(w, "PROVIDER\tMODEL\tTIME\tRESPONSE"); err != nil {
+				return fmt.Errorf("error writing header: %w", err)
+			}
+			if _, err := fmt.Fprintln(w, "--------\t-----\t----\t--------"); err != nil {
+				return fmt.Errorf("error writing header: %w", err)
+			}
 
 			// Sort providers for consistent output
 			sortedProviders := make([]string, 0, len(results))
@@ -158,11 +162,15 @@ var completeCmd = &cobra.Command{
 				timeStr := fmt.Sprintf("%dms", result.ElapsedTime.Milliseconds())
 
 				// Print provider, model, time, and response
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", result.Provider, result.Model, timeStr, responseText)
+				if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", result.Provider, result.Model, timeStr, responseText); err != nil {
+					return fmt.Errorf("error writing result: %w", err)
+				}
 			}
 
 			// Flush the tabwriter
-			w.Flush()
+			if err := w.Flush(); err != nil {
+				return fmt.Errorf("error flushing tabwriter: %w", err)
+			}
 
 			// For each provider, print the full response
 			fmt.Println("\nDetailed responses:")
@@ -191,7 +199,7 @@ var completeCmd = &cobra.Command{
 			// Get API key from config or environment
 			apiKey := cfg.GetAPIKey(providerName)
 			if apiKey == "" {
-				return fmt.Errorf("%s API key not found. Set it with: go-llm set %s --api-key YOUR_API_KEY",
+				return fmt.Errorf("%s API key not found. Set it with: gollm set %s --api-key YOUR_API_KEY",
 					providerName, providerName)
 			}
 
@@ -224,8 +232,12 @@ var completeCmd = &cobra.Command{
 				timeColor := color.New(color.FgYellow)
 
 				// Add header with colors
-				headerColor.Fprintln(w, "PROMPT\tMODEL\tTIME\tRESPONSE")
-				headerColor.Fprintln(w, "------\t-----\t----\t--------")
+				if _, err := headerColor.Fprintln(w, "PROMPT\tMODEL\tTIME\tRESPONSE"); err != nil {
+					return fmt.Errorf("error writing header: %w", err)
+				}
+				if _, err := headerColor.Fprintln(w, "------\t-----\t----\t--------"); err != nil {
+					return fmt.Errorf("error writing header: %w", err)
+				}
 
 				// Format prompt (truncate if too long)
 				promptText := prompt
@@ -246,13 +258,23 @@ var completeCmd = &cobra.Command{
 				}
 
 				// Print row with colored model and time
-				fmt.Fprintf(w, "%s\t", promptText)
-				modelColor.Fprintf(w, "%s\t", modelFlag)
-				timeColor.Fprintf(w, "%dms\t", elapsedTime.Milliseconds())
-				fmt.Fprintf(w, "%s\n", responseText)
+				if _, err := fmt.Fprintf(w, "%s\t", promptText); err != nil {
+					return fmt.Errorf("error writing prompt: %w", err)
+				}
+				if _, err := modelColor.Fprintf(w, "%s\t", modelFlag); err != nil {
+					return fmt.Errorf("error writing model: %w", err)
+				}
+				if _, err := timeColor.Fprintf(w, "%dms\t", elapsedTime.Milliseconds()); err != nil {
+					return fmt.Errorf("error writing time: %w", err)
+				}
+				if _, err := fmt.Fprintf(w, "%s\n", responseText); err != nil {
+					return fmt.Errorf("error writing response: %w", err)
+				}
 
 				// Flush the tabwriter
-				w.Flush()
+				if err := w.Flush(); err != nil {
+					return fmt.Errorf("error flushing tabwriter: %w", err)
+				}
 
 				// Print full response after the table
 				fmt.Println("\nFull response:")

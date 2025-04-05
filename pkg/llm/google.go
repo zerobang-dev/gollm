@@ -37,7 +37,7 @@ func NewGoogleProvider(apiKey string, _ *http.Client) *GoogleProvider {
 func (p *GoogleProvider) Query(ctx context.Context, prompt string, options ...Option) (string, error) {
 	// Check if client is initialized
 	if p.client == nil {
-		return "", errors.New("Google client not initialized")
+		return "", errors.New("google client not initialized")
 	}
 
 	// Apply options
@@ -106,7 +106,9 @@ func (p *GoogleProvider) Query(ctx context.Context, prompt string, options ...Op
 // Close closes the provider's resources
 func (p *GoogleProvider) Close() error {
 	if p.client != nil {
-		p.client.Close()
+		if err := p.client.Close(); err != nil {
+			return fmt.Errorf("error closing Google client: %w", err)
+		}
 	}
 	return nil
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zerobang-dev/go-llm/cmd/go-llm/commands"
+	"github.com/zerobang-dev/gollm/cmd/gollm/commands"
 )
 
 func main() {

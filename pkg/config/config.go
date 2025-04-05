@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 	"gopkg.in/yaml.v3"
 )
 
@@ -119,7 +119,7 @@ func getConfigPath() (string, error) {
 		return "", fmt.Errorf("error getting user home directory: %w", err)
 	}
 
-	configDir := filepath.Join(homeDir, ".config", "go-llm")
+	configDir := filepath.Join(homeDir, ".config", "gollm")
 	configPath := filepath.Join(configDir, "config.yml")
 
 	return configPath, nil

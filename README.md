@@ -1,4 +1,4 @@
-# go-llm
+# gollm
 
 A command-line interface for interacting with Large Language Models (LLMs).
 
@@ -14,15 +14,15 @@ A command-line interface for interacting with Large Language Models (LLMs).
 ## Installation
 
 ```bash
-go install github.com/zerobang-dev/go-llm@latest
+go install github.com/zerobang-dev/gollm@latest
 ```
 
 Or build from source:
 
 ```bash
-git clone https://github.com/zerobang-dev/go-llm.git
-cd go-llm
-go build -o go-llm ./cmd/go-llm
+git clone https://github.com/zerobang-dev/gollm.git
+cd gollm
+go build -o gollm ./cmd/gollm
 ```
 
 ## Configuration
@@ -32,10 +32,10 @@ You can set up your API keys in two ways:
 1. Using the `set` command (recommended):
    ```bash
    # For Anthropic
-   go-llm set anthropic --api-key your_anthropic_api_key_here
+   gollm set anthropic --api-key your_anthropic_api_key_here
    
    # For Deepseek
-   go-llm set deepseek --api-key your_deepseek_api_key_here
+   gollm set deepseek --api-key your_deepseek_api_key_here
    ```
 
 2. Using environment variables:
@@ -47,32 +47,32 @@ You can set up your API keys in two ways:
    export DEEPSEEK_API_KEY=your_deepseek_api_key_here
    ```
 
-The configuration is stored in `~/.config/go-llm/config.yml`.
+The configuration is stored in `~/.config/gollm/config.yml`.
 
 ## Usage
 
 ```bash
 # Get a completion with default model (claude-3-7-sonnet-latest)
-go-llm complete "Write a haiku about programming"
+gollm complete "Write a haiku about programming"
 
 # Using Anthropic's Claude
-go-llm complete -m claude-3-7-sonnet-latest "Write a haiku about programming"
+gollm complete -m claude-3-7-sonnet-latest "Write a haiku about programming"
 
 # Using Deepseek models
-go-llm complete -m deepseek-chat "Explain quantum computing"
-go-llm complete -m deepseek-coder "Write a function to sort an array in Go"
+gollm complete -m deepseek-chat "Explain quantum computing"
+gollm complete -m deepseek-coder "Write a function to sort an array in Go"
 
 # Adjust the temperature
-go-llm complete -t 0.9 "Write a creative story"
+gollm complete -t 0.9 "Write a creative story"
 
 # Add a system prompt
-go-llm complete -s "You are a helpful coding assistant" "How do I implement a binary search in Go?"
+gollm complete -s "You are a helpful coding assistant" "How do I implement a binary search in Go?"
 
 # Query all configured providers and compare responses
-go-llm complete -a "Explain the difference between slices and arrays in Go"
+gollm complete -a "Explain the difference between slices and arrays in Go"
 
 # Combine flags
-go-llm complete -a -t 0.8 -s "You are a Go expert" "What are the best practices for error handling in Go?"
+gollm complete -a -t 0.8 -s "You are a Go expert" "What are the best practices for error handling in Go?"
 ```
 
 ## Supported Models

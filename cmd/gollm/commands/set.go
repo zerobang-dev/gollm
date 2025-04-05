@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/config"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/config"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 var apiKeyFlag string
@@ -46,7 +46,7 @@ var setCmd = &cobra.Command{
 		}
 
 		fmt.Printf("API key for %s has been set.\n", providerName)
-		fmt.Printf("Configuration saved to ~/.config/go-llm/config.yml\n")
+		fmt.Printf("Configuration saved to ~/.config/gollm/config.yml\n")
 
 		return nil
 	},

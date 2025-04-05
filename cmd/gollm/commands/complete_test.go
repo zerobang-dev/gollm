@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 // Mock execution of the command without actually calling external APIs
@@ -26,7 +26,7 @@ func mockCommand(t *testing.T, args []string, wantErr bool, contains []string) {
 	}
 
 	// Create a fresh command for each test to avoid state between runs
-	cmd := &cobra.Command{Use: "go-llm"}
+	cmd := &cobra.Command{Use: "gollm"}
 	cmd.AddCommand(completeCmd)
 	cmd.PersistentFlags().StringVarP(&modelFlag, "model", "m", "claude-3-7-sonnet-latest", "LLM model to use")
 

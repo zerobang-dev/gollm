@@ -7,7 +7,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 // listModelsCmd represents the models command

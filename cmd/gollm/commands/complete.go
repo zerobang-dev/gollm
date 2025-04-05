@@ -13,8 +13,8 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"github.com/zerobang-dev/go-llm/pkg/config"
-	"github.com/zerobang-dev/go-llm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/config"
+	"github.com/zerobang-dev/gollm/pkg/llm"
 )
 
 var (
@@ -99,7 +99,7 @@ var completeCmd = &cobra.Command{
 
 			// Check if we have any API keys
 			if len(apiKeys) == 0 {
-				return fmt.Errorf("no API keys found. Set at least one provider API key with: go-llm set <provider> --api-key YOUR_API_KEY")
+				return fmt.Errorf("no API keys found. Set at least one provider API key with: gollm set <provider> --api-key YOUR_API_KEY")
 			}
 
 			// Create LLM service with all API keys
@@ -191,7 +191,7 @@ var completeCmd = &cobra.Command{
 			// Get API key from config or environment
 			apiKey := cfg.GetAPIKey(providerName)
 			if apiKey == "" {
-				return fmt.Errorf("%s API key not found. Set it with: go-llm set %s --api-key YOUR_API_KEY",
+				return fmt.Errorf("%s API key not found. Set it with: gollm set %s --api-key YOUR_API_KEY",
 					providerName, providerName)
 			}
 

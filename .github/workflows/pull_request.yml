@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -32,13 +32,12 @@ jobs:
             gofmt -l .
             exit 1
           fi
-          
+
       - name: Run linters
         run: golangci-lint run
-          
+
       - name: Test with coverage
         run: go test ./... -coverprofile=coverage.out
-        
+
       - name: Check coverage
         run: go tool cover -func=coverage.out
-        

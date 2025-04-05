@@ -163,8 +163,8 @@ var completeCmd = &cobra.Command{
 
 				// Print provider, model, time, and response
 				if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", result.Provider, result.Model, timeStr, responseText); err != nil {
-						return fmt.Errorf("error writing result: %w", err)
-					}
+					return fmt.Errorf("error writing result: %w", err)
+				}
 			}
 
 			// Flush the tabwriter
@@ -233,11 +233,11 @@ var completeCmd = &cobra.Command{
 
 				// Add header with colors
 				if _, err := headerColor.Fprintln(w, "PROMPT\tMODEL\tTIME\tRESPONSE"); err != nil {
-						return fmt.Errorf("error writing header: %w", err)
-					}
+					return fmt.Errorf("error writing header: %w", err)
+				}
 				if _, err := headerColor.Fprintln(w, "------\t-----\t----\t--------"); err != nil {
-						return fmt.Errorf("error writing header: %w", err)
-					}
+					return fmt.Errorf("error writing header: %w", err)
+				}
 
 				// Format prompt (truncate if too long)
 				promptText := prompt
@@ -259,17 +259,17 @@ var completeCmd = &cobra.Command{
 
 				// Print row with colored model and time
 				if _, err := fmt.Fprintf(w, "%s\t", promptText); err != nil {
-						return fmt.Errorf("error writing prompt: %w", err)
-					}
+					return fmt.Errorf("error writing prompt: %w", err)
+				}
 				if _, err := modelColor.Fprintf(w, "%s\t", modelFlag); err != nil {
-						return fmt.Errorf("error writing model: %w", err)
-					}
+					return fmt.Errorf("error writing model: %w", err)
+				}
 				if _, err := timeColor.Fprintf(w, "%dms\t", elapsedTime.Milliseconds()); err != nil {
-						return fmt.Errorf("error writing time: %w", err)
-					}
+					return fmt.Errorf("error writing time: %w", err)
+				}
 				if _, err := fmt.Fprintf(w, "%s\n", responseText); err != nil {
-						return fmt.Errorf("error writing response: %w", err)
-					}
+					return fmt.Errorf("error writing response: %w", err)
+				}
 
 				// Flush the tabwriter
 				if err := w.Flush(); err != nil {

@@ -21,11 +21,11 @@ var listModelsCmd = &cobra.Command{
 
 		// Add header
 		if _, err := fmt.Fprintln(w, "PROVIDER\tMODEL"); err != nil {
-				return fmt.Errorf("error writing header: %w", err)
-			}
+			return fmt.Errorf("error writing header: %w", err)
+		}
 		if _, err := fmt.Fprintln(w, "--------\t-----"); err != nil {
-				return fmt.Errorf("error writing header: %w", err)
-			}
+			return fmt.Errorf("error writing header: %w", err)
+		}
 
 		// Get providers and sort them for consistent output
 		providers := make([]string, 0, len(llm.SupportedProviders))

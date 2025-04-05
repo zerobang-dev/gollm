@@ -107,8 +107,8 @@ func (p *GoogleProvider) Query(ctx context.Context, prompt string, options ...Op
 func (p *GoogleProvider) Close() error {
 	if p.client != nil {
 		if err := p.client.Close(); err != nil {
-				return fmt.Errorf("error closing Google client: %w", err)
-			}
+			return fmt.Errorf("error closing Google client: %w", err)
+		}
 	}
 	return nil
 }

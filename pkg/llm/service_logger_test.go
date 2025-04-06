@@ -30,14 +30,22 @@ func TestServiceWithLogger(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Errorf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	// Create a logger
 	testLogger, err := logger.NewLogger(tmpDir)
 	if err != nil {
 		t.Fatalf("Failed to create logger: %v", err)
 	}
-	defer testLogger.Close()
+	defer func() {
+		if err := testLogger.Close(); err != nil {
+			t.Errorf("Failed to close logger: %v", err)
+		}
+	}()
 
 	// Create a mock provider
 	mockProvider := &MockProvider{Response: "This is a test response"}

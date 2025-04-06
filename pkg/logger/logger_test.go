@@ -12,14 +12,22 @@ func TestLogger(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			t.Errorf("Failed to remove temp dir: %v", err)
+		}
+	}()
 
 	// Create a new logger
 	logger, err := NewLogger(tmpDir)
 	if err != nil {
 		t.Fatalf("Failed to create logger: %v", err)
 	}
-	defer logger.Close()
+	defer func() {
+		if err := logger.Close(); err != nil {
+			t.Errorf("Failed to close logger: %v", err)
+		}
+	}()
 
 	// Log a test query
 	err = logger.LogQuery(

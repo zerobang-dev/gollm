@@ -44,7 +44,9 @@ func NewLogger(configDir string) (*Logger, error) {
 		)
 	`)
 	if err != nil {
-		db.Close()
+		if err := db.Close(); err != nil {
+			fmt.Fprintf(os.Stderr, "Error closing database: %v\n", err)
+		}
 		return nil, fmt.Errorf("failed to create table: %w", err)
 	}
 
@@ -90,7 +92,11 @@ func (l *Logger) GetRecentQueries(limit int) ([]Query, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch queries: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			fmt.Fprintf(os.Stderr, "Error closing rows: %v\n", err)
+		}
+	}()
 
 	var queries []Query
 	for rows.Next() {
@@ -134,7 +140,11 @@ func (l *Logger) SearchQueries(text string, limit int) ([]Query, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to search queries: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			fmt.Fprintf(os.Stderr, "Error closing rows: %v\n", err)
+		}
+	}()
 
 	var queries []Query
 	for rows.Next() {

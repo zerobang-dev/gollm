@@ -79,7 +79,7 @@ func (s *Service) QueryWithTiming(ctx context.Context, prompt, modelName string,
 	options = append([]Option{WithModel(modelName)}, options...)
 
 	// Extract temperature for logging
-	var temperature float64 = 0.7 // default
+	temperature := 0.7 // default
 	for _, opt := range options {
 		if opt == nil {
 			continue

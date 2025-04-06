@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -78,7 +79,11 @@ func queryLLM(ctx context.Context, prompt string, modelFlag string, systemPrompt
 
 	// Close logger when function returns
 	if queryLogger != nil {
-		defer queryLogger.Close()
+		defer func() {
+			if err := queryLogger.Close(); err != nil {
+				fmt.Fprintf(os.Stderr, "Error closing logger: %v\n", err)
+			}
+		}()
 	}
 
 	if queryAllFlag {

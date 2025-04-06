@@ -30,7 +30,11 @@ var historyCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("failed to initialize logger: %w", err)
 		}
-		defer queryLogger.Close()
+		defer func() {
+			if err := queryLogger.Close(); err != nil {
+				fmt.Fprintf(os.Stderr, "Error closing logger: %v\n", err)
+			}
+		}()
 		
 		var queries []logger.Query
 		
@@ -58,8 +62,12 @@ var historyCmd = &cobra.Command{
 		
 		// Display queries in a table
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(w, "TIME\tMODEL\tDURATION\tPROMPT")
-		fmt.Fprintln(w, "----\t-----\t--------\t------")
+		if _, err := fmt.Fprintln(w, "TIME\tMODEL\tDURATION\tPROMPT"); err != nil {
+			return fmt.Errorf("failed to write header: %w", err)
+		}
+		if _, err := fmt.Fprintln(w, "----\t-----\t--------\t------"); err != nil {
+			return fmt.Errorf("failed to write separator: %w", err)
+		}
 		
 		for _, q := range queries {
 			// Format timestamp
@@ -71,10 +79,14 @@ var historyCmd = &cobra.Command{
 			// Truncate prompt
 			promptPreview := truncateString(q.Prompt, 40)
 			
-			fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", 
-				timeStr, q.Model, durationStr, promptPreview)
+			if _, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", 
+				timeStr, q.Model, durationStr, promptPreview); err != nil {
+				return fmt.Errorf("failed to write row: %w", err)
+			}
 		}
-		w.Flush()
+		if err := w.Flush(); err != nil {
+			return fmt.Errorf("failed to flush writer: %w", err)
+		}
 		
 		// Show detailed view of the most recent query if requested
 		if historyDetailFlag && len(queries) > 0 {

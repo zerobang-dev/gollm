@@ -10,8 +10,8 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/spf13/cobra"
 	"github.com/zerobang-dev/gollm/pkg/config"
-	"github.com/zerobang-dev/gollm/pkg/logger"
 	"github.com/zerobang-dev/gollm/pkg/llm"
+	"github.com/zerobang-dev/gollm/pkg/logger"
 )
 
 // readPromptFromArgs reads the prompt from command arguments or stdin
@@ -49,7 +49,7 @@ func queryLLM(ctx context.Context, prompt string, modelFlag string, systemPrompt
 	if err != nil {
 		return nil, fmt.Errorf("error loading config: %w", err)
 	}
-	
+
 	// Initialize logger
 	var queryLogger *logger.Logger
 	configDir := config.GetConfigDir()
@@ -113,7 +113,7 @@ func queryAllProviders(ctx context.Context, prompt string, cfg *config.Config, h
 
 	// Create LLM service with all API keys
 	service := llm.NewService(allApiKeys, httpClient)
-	
+
 	// Set logger if available
 	if queryLogger != nil {
 		service.SetLogger(queryLogger)
@@ -157,7 +157,7 @@ func querySingleProvider(ctx context.Context, prompt string, modelFlag string, c
 	apiKeys := make(map[string]string)
 	apiKeys[providerName] = apiKey
 	service := llm.NewService(apiKeys, httpClient)
-	
+
 	// Set logger if available
 	if queryLogger != nil {
 		service.SetLogger(queryLogger)

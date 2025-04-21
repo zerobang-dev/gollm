@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"sync"
 	"time"
+
+	"github.com/zerobang-dev/gollm/pkg/logger"
 )
 
 // ProviderResponse represents a response from a provider along with metadata
@@ -21,6 +24,7 @@ type ProviderResponse struct {
 type Service struct {
 	providers  map[string]Provider
 	httpClient *http.Client
+	logger     *logger.Logger // Optional query logger
 }
 
 // NewService creates a new LLM service with API keys and an optional HTTP client
@@ -50,6 +54,11 @@ func NewService(apiKeys map[string]string, httpClient *http.Client) *Service {
 	return service
 }
 
+// SetLogger sets the query logger for the service
+func (s *Service) SetLogger(l *logger.Logger) {
+	s.logger = l
+}
+
 // QueryWithTiming sends a prompt to the model and returns the response with timing information
 func (s *Service) QueryWithTiming(ctx context.Context, prompt, modelName string, options ...Option) (string, time.Duration, error) {
 	// Validate model
@@ -69,6 +78,19 @@ func (s *Service) QueryWithTiming(ctx context.Context, prompt, modelName string,
 	// Add model to options
 	options = append([]Option{WithModel(modelName)}, options...)
 
+	// Extract temperature for logging
+	temperature := 0.7 // default
+	for _, opt := range options {
+		if opt == nil {
+			continue
+		}
+		reqOpts := &RequestOptions{}
+		opt(reqOpts)
+		if reqOpts.Temperature != 0 {
+			temperature = reqOpts.Temperature
+		}
+	}
+
 	// Start the timer
 	startTime := time.Now()
 
@@ -77,6 +99,18 @@ func (s *Service) QueryWithTiming(ctx context.Context, prompt, modelName string,
 
 	// Calculate elapsed time
 	elapsedTime := time.Since(startTime)
+
+	// Log query if logger is configured
+	if err == nil && s.logger != nil {
+		// Only log successful queries
+		// Use a goroutine to avoid blocking the response
+		go func() {
+			if logErr := s.logger.LogQuery(prompt, modelName, response, elapsedTime, temperature); logErr != nil {
+				// Just print the error but don't fail the request
+				fmt.Fprintf(os.Stderr, "Failed to log query: %v\n", logErr)
+			}
+		}()
+	}
 
 	return response, elapsedTime, err
 }
